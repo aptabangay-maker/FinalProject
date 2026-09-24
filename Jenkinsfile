@@ -4,27 +4,26 @@ pipeline {
     stages {
         stage('Build & Test') {
             steps {
-                sh 'mvn clean test'
+                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && mvn clean test"'
             }
         }
 
         stage('Package Application') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && mvn clean package -DskipTests"'
             }
         }
 
         stage('Docker Build & Verify') {
             steps {
-                sh 'DOCKER_BUILDKIT=0 docker build -t hello-world:latest .'
-                sh 'docker run --rm hello-world:latest'
+                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && DOCKER_BUILDKIT=0 docker build -t hello-world:latest ."'
+                bat 'wsl -d Ubuntu -- bash -c "docker run --rm hello-world:latest"'
             }
         }
 
         stage('System Maintenance') {
             steps {
-                sh 'chmod +x system_maintenance.sh'
-                sh './system_maintenance.sh'
+                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && chmod +x system_maintenance.sh && ./system_maintenance.sh"'
             }
         }
     }
