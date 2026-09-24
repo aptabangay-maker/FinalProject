@@ -4,25 +4,37 @@ pipeline {
     stages {
         stage('Build & Test') {
             steps {
-                bat 'bash -c "mvn clean test"'
+                bat 'call mvn clean test || mvn.cmd clean test'
             }
         }
 
         stage('Package Application') {
             steps {
-                bat 'bash -c "mvn clean package -DskipTests"'
+                bat 'call mvn clean package -DskipTests || mvn.cmd clean package -DskipTests'
             }
         }
 
         stage('Docker Build & Verify') {
             steps {
-                bat 'bash -c "docker build -t hello-world:latest . && docker run --rm hello-world:latest"'
+                bat 'docker build -t hello-world:latest .'
+                bat 'docker run --rm hello-world:latest'
             }
         }
 
         stage('System Maintenance') {
             steps {
-                bat 'bash -c "chmod +x system_maintenance.sh && ./system_maintenance.sh"'
+                bat '''
+                    @echo off
+                    echo ==============================================
+                    echo Running System Maintenance Tasks...
+                    echo ==============================================
+                    echo Checking Disk Space:
+                    wmic logicaldisk get caption, freespace, size
+                    echo Cleaning temporary files...
+                    del /q /f %TEMP%\\* 2>nul || ver >nul
+                    echo System Maintenance Completed Successfully.
+                    echo ==============================================
+                '''
             }
         }
     }
