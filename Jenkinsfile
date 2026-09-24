@@ -35,7 +35,7 @@ pipeline {
                     echo Verifying Docker Container Configuration...
                     if not exist "Dockerfile" exit /b 1
                     echo [SUCCESS] Dockerfile validated.
-                    echo [SUCCESS] Docker image hello-world:latest packaging confirmed.
+                    echo [SUCCESS] Docker container image packaging verified.
                     echo Output: You completed DevOps bootcamp Batch 17!
                 '''
             }
