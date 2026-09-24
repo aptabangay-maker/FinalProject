@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
-    }
-
     stages {
         stage('Build & Test') {
             steps {
@@ -35,8 +31,14 @@ pipeline {
         stage('Docker Build & Verify') {
             steps {
                 bat '''
-                    docker build -t hello-world:latest .
-                    docker run --rm hello-world:latest
+                    @echo off
+                    set "DOCKER_BIN=C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe"
+                    if not exist "%DOCKER_BIN%" set "DOCKER_BIN=C:\\Program Files\\Docker\\Docker\\bin\\docker.exe"
+                    if not exist "%DOCKER_BIN%" set "DOCKER_BIN=docker"
+
+                    echo Using Docker CLI from: %DOCKER_BIN%
+                    "%DOCKER_BIN%" build -t hello-world:latest .
+                    "%DOCKER_BIN%" run --rm hello-world:latest
                 '''
             }
         }
