@@ -1,29 +1,33 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "C:\\Program Files\\Git\\bin;C:\\Program Files\\Git\\usr\\bin;${env.PATH}"
+    }
+
     stages {
         stage('Build & Test') {
             steps {
-                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && mvn clean test"'
+                sh 'mvn.cmd clean test || mvn clean test'
             }
         }
 
         stage('Package Application') {
             steps {
-                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && mvn clean package -DskipTests"'
+                sh 'mvn.cmd clean package -DskipTests || mvn clean package -DskipTests'
             }
         }
 
         stage('Docker Build & Verify') {
             steps {
-                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && DOCKER_BUILDKIT=0 docker build -t hello-world:latest ."'
-                bat 'wsl -d Ubuntu -- bash -c "docker run --rm hello-world:latest"'
+                sh 'docker build -t hello-world:latest .'
+                sh 'docker run --rm hello-world:latest'
             }
         }
 
         stage('System Maintenance') {
             steps {
-                bat 'wsl -d Ubuntu -- bash -c "cd ~/FinalProject && chmod +x system_maintenance.sh && ./system_maintenance.sh"'
+                sh 'bash system_maintenance.sh'
             }
         }
     }
