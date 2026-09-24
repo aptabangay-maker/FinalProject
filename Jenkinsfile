@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build & Test') {
             steps {
                 sh 'mvn clean test'
@@ -32,12 +26,6 @@ pipeline {
                 sh 'chmod +x system_maintenance.sh'
                 sh './system_maintenance.sh'
             }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
         }
     }
 }
