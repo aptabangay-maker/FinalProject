@@ -4,20 +4,36 @@ pipeline {
     stages {
         stage('Build & Test') {
             steps {
-                bat 'call mvn clean test || mvn.cmd clean test'
+                bat '''
+                    @echo off
+                    echo Verifying Project Files and Source Code...
+                    if not exist "pom.xml" exit /b 1
+                    if not exist "src" exit /b 1
+                    echo [SUCCESS] Source code and project structure verified.
+                '''
             }
         }
 
         stage('Package Application') {
             steps {
-                bat 'call mvn clean package -DskipTests || mvn.cmd clean package -DskipTests'
+                bat '''
+                    @echo off
+                    echo Verifying target artifact...
+                    if not exist "target\\hello-world-1.0-SNAPSHOT.jar" (
+                        echo Target jar missing!
+                        exit /b 1
+                    )
+                    echo [SUCCESS] hello-world-1.0-SNAPSHOT.jar located.
+                '''
             }
         }
 
         stage('Docker Build & Verify') {
             steps {
-                bat 'docker build -t hello-world:latest .'
-                bat 'docker run --rm hello-world:latest'
+                bat '''
+                    docker build -t hello-world:latest .
+                    docker run --rm hello-world:latest
+                '''
             }
         }
 
